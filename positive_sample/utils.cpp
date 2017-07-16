@@ -111,7 +111,7 @@ void ZoomImage(Mat &src, Mat &dst, BoundingBox& bbx, Mat_<double>& shape)
 {
 	double fx = limitBoundingBoxWidth / bbx.width;
 	double fy = limitBoundingBoxHeight / bbx.height;
-	resize(src, dst, Size(), fx, fy, INTER_LINEAR); // 双线性插值缩放
+	resize(src, dst, Size(96, 96), 0, 0, INTER_LINEAR); // 双线性插值缩放
 	for (int i = 0; i<landmarks_num; i++){
 		shape(i, 0) = shape(i, 0) * fx;
 		shape(i, 1) = shape(i, 1) * fy;
