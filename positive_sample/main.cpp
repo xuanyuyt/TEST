@@ -76,14 +76,14 @@ int main()
 		// Get ROI
 		ROI = dstImage.clone();
 		ROI = ROI(Range(int(bbx2.start_y), int(bbx2.start_y) + bbx2.height), Range(int(bbx2.start_x), int(bbx2.start_x) + bbx2.width)); // 截取正样本
-
+		
 		// Test result
 		/*namedWindow("show image", 1);
 		DrawPredictedImage(dstImage, ground_truth_shape, bbx, bbx2);
 		namedWindow("show ROI", 1);
 		DrawROIImage(ROI);
 		waitKey(0);*/
-		imwrite(savePath + imageName + ".jpg", dstImage); // 保存正样本
+		imwrite(savePath + imageName + ".jpg", ROI); // 保存正样本
 	}
 
 	return 0;

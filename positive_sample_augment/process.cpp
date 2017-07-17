@@ -19,6 +19,16 @@ Mat_<double> LoadGroundTruthShape(string& filename){
 	return shape;
 }
 
+///********************************************************************************************
+// Method:    imageRotation
+// Access:    public 
+// Returns:   void
+// Parameter: const Mat & srcImage
+// Parameter: Mat & dstImage
+// Parameter: Mat_<double> & shape
+// Parameter: const float & angle
+// Function: 按标注中心随机旋转一个角度 angle
+///********************************************************************************************
 void imageRotation(const Mat& srcImage, Mat& dstImage, Mat_<double>& shape, const float& angle)
 {
 	const double cosAngle = cos(angle);
