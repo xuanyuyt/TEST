@@ -98,11 +98,6 @@ void on_MouseHandle(int event, int x, int y, int flags, void* param)
 							  //调用函数进行绘制
 							  DrawLine(image, g_pt);//画线
 	}
-		//右键按下消息
-	else if (event == EVENT_RBUTTONDOWN)
-	{
-							  
-	}
 }
 
 ///*****************************************************************************************************
