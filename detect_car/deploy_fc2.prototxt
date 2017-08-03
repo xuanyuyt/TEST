@@ -3,8 +3,8 @@ name: "CarNet"
 input: "data"
 input_dim: 1
 input_dim: 3
-input_dim: 119
-input_dim: 158
+input_dim: 952
+input_dim: 1269
 
 layer {
   name: "conv1"

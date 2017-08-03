@@ -18,9 +18,9 @@ caffe.set_device(0)
 
 model_path = 'model/'
 model_define = model_path + 'deploy.prototxt'
-model_weight = model_path + 'snapshot_21_iter_10000.caffemodel'
+model_weight = model_path + 'snapshot_21_iter_20000.caffemodel'
 model_define_fc = model_path + 'deploy_fc.prototxt'
-model_weight_fc = model_path + 'snapshot_21_iter_10000_fc.caffemodel'
+model_weight_fc = model_path + 'snapshot_21_iter_20000_fc.caffemodel'
 
 # helper show filter outputs
 def show_filters(net):
@@ -130,7 +130,7 @@ def nms_average(boxes, overlapThresh=0.2):
     # print boxes[pick]
     return result_boxes
 
-def computIOU(A, B):
+def computIOU(A, B, threshold):
     W = min(A[2], B[2]) - max(A[0], B[0])
     H = min(A[3], B[3]) - max(A[1], B[1])
     if (W <= 0 or H <= 0):
@@ -138,8 +138,8 @@ def computIOU(A, B):
     SA = (A[2] - A[0]) * (A[3] - A[1])
     SB = (B[2] - B[0]) * (B[3] - B[1])
     cross = W * H
-    iou = cross / (SA + SB - cross)
-    if (iou > 0.3):
+    iou = float(cross) / (SA + SB - cross)
+    if (iou > threshold):
         return True
     else:
         return False
@@ -247,6 +247,9 @@ def convert_full_conv():  # 转换成全卷积模型
 
 def face_detection(imgList):
     img_count = 1
+    TP = 0
+    FP = 0
+    FN = 0
     for imgFile in open(imgList).readlines():  # 对于每个测试图片
         scales = []
         factor = 0.793700526
@@ -335,19 +338,30 @@ def face_detection(imgList):
 
         plt.subplots(1)
         num = 1
+        label = False
+        if (not true_boxes):
+            FP += 1  # 把负类预测为正类
+            FN += 1  # 把正类预测为负类
         for box in true_boxes:
             cv2.rectangle(img, (int(ground_truth[0]), int(ground_truth[1])), (int(ground_truth[2]), int(ground_truth[3])), (255, 255, 255), 2) # 白色
-            if (not computIOU(box, ground_truth)):
+            if (not computIOU(box, ground_truth, threshold)):
                 # cropImg = img[int(box[1]):int(box[3]), int(box[0]):int(box[2])]
                 # cropImg = cv2.resize(cropImg, (96, 96), interpolation = cv2.INTER_LINEAR )
                 # cv2.imwrite('E:/tyang/Car/Tr22/Neg' + str(time) + '_' + str(img_count) + '_' + str(num) + '.jpg', cropImg)
-
+                FP += 1 # 把负类预测为正类
+                if (not label):
+                    FN += 1 # 把正类预测为负类
                 cv2.rectangle(img, (int(box[0]), int(box[1])), (int(box[2]), int(box[3])), (255, 0, 0), 2) # red
             else:
+                label = True # 存在正确预测
+                TP += 1
                 cv2.rectangle(img, (int(box[0]), int(box[1])), (int(box[2]), int(box[3])), (0, 0, 255), 2) # blue
 
             num += 1
 
+        print 'TP=',TP
+        print 'FP=',FP
+        print 'FN=',FN
         plt.imshow(img)
         plt.show()
         plt.close('all')
@@ -358,6 +372,7 @@ def face_detection(imgList):
 if __name__ == "__main__":
     start = clock()
     # convert_full_conv()
+    threshold = 0.5
     face_detection("D:/Other_Dataets/Car/Ts1/part5/Path_Images.txt")
     finish = clock()
     print "耗时： "
